@@ -38,30 +38,22 @@ import stateful from '../helpers/stateful';
 //   </div>;
 // };
 
-const Counter = stateful(
-  count=>count || 0,
-  ({key, name}, count, setState)=>{
+const InputTest = stateful(
+  text=>text || 'hello',
+  ({key, name}, text, setState)=>{
     <div key={key}>
-      <span>{count} {name} &nbsp;&nbsp;&nbsp;</span>
-      <button onclick={()=>setState(++count)}>Hello World</button>
+      <input type="text" oninput={e=>setState(e.target.value)} value={text}/>
+      <span> {name}: {text}</span>
     </div>;
   }
 );
-
-
-const Counter2 = ({key, name}, count, setState)=>{
-  <div key={key}>
-    <span>{count || 'hello'} {name} &nbsp;&nbsp;&nbsp;</span>
-    <button onclick={()=>setState(++count)}>Hello World</button>
-  </div>;
-};
 
 const list = Array.apply(null, {length: 100}).map(Number.call, Number);
 
 export default ()=>{
   <div>
     {list.forEach(i=>{
-      <Counter key={i} name={'C' + i} />;
+      <InputTest key={i} name={'C' + i} />;
     })}
   </div>;
 };
