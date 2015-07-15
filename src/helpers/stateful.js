@@ -14,59 +14,77 @@ Requirements:
 
 */
 
-export default (reduce, render)=>{
-  let nodeName;
+function Component(reduce, render){
+  this.reduce   = reduce;
+  this._render  = render;
+  this.state    = reduce();
+  this.props    = null;
+  this.setState = this.setState.bind(this);
+}
 
-  function statefulRender(props, node){
-    // Called by component to set the new state and
-    // re-render the component without re-rendering
-    // the whole document
-    function setState(newState){
-      const parentNode = node.parentNode;
+Component.prototype.render = function(){ this._render(this.props, this.state, this.setState); };
 
-      node.statefulState = newState;
-      IncrementalDOM.patch(parentNode, ()=>{
-        // Skip over all siblings before component's element
-        let curNode = parentNode.firstChild;
-        while(curNode !== node){
-          IncrementalDOM.skipNextElement();
-          curNode = curNode.nextSibling;
-        }
+// Called by the component to set the new state and re-render the component without re-rendering the
+// whole document
+Component.prototype.setState = function(newState){
+  const parentNode = this.node.parentNode;
+  this.state = newState;
 
-        render(props, newState, setState);
-
-        // Mark the last child as visited so IncrementalDOM
-        // doesn't truncate all sibling elements after the
-        // component's element
-        IncrementalDOM.markVisited(parentNode.lastChild);
-      });
+  IncrementalDOM.patch(parentNode, ()=>{
+    // Skip over all siblings before component's element
+    let curNode = parentNode.firstChild;
+    while(curNode !== this.node){
+      IncrementalDOM.skipNextElement();
+      curNode = curNode.nextSibling;
     }
 
+    this.render();
+
+    // Mark the last child as visited so IncrementalDOM
+    // doesn't truncate all sibling elements after the
+    // component's element
+    IncrementalDOM.markVisited(parentNode.lastChild);
+  });
+};
+
+export default (reduce, render)=>{
+  // When rendering a component, we need to determine whether it's one of the following cases:
+  //   - Initial render
+  //   - Re-render
+  //
+  // We can determine this by asking IncrementalDOM whether we're about to render to an existing
+  // node (`IncrementalDOM.getMatchingNode(nodeName, key)`).
+  // The node name isn't known at the time of component declaration, but can be determined on
+  // the very first render.
+  let rootNodeName;
+
+  return props=>{
+    let component;
     const key = props && props.key;
 
-    // Try to find component's element
-    node = node || (nodeName && IncrementalDOM.getMatchingNode(nodeName, key));
+    // Asking IncrementalDOM whether we are going to be re-rendering an existing component
+    // or rendering a new component.
+    let node = rootNodeName && IncrementalDOM.getMatchingNode(rootNodeName, key);
 
-    // Initial render
+    // Render a new component
     if(!node){
-      // TODO(pwong): Call with props and previous state
-      const state = reduce();
+      component = new Component(reduce, render, props);
 
-      // Tell IncrementalDOM to track the root (first)
-      // element rendered.  This will be considered the
-      // component's element.
+      // To determine the component's root element, we ask IncrementalDOM to track the first
+      // element rendered.
       IncrementalDOM.elementTrackRoot();
-      render(props, state, setState);
+      component.render();
       node = IncrementalDOM.elementGetRoot();
-      // debugger;
-      // nodeName = node.nodeName.toLowerCase();
-      node.statefulState = state;
+
+      rootNodeName = node.nodeName.toLowerCase();
+      component.node = node;
+      node.__component = component;
     }
     // Parent re-render
     else{
-      render(props, node.statefulState, setState);
+      component = node.__component;
+      component.props = props;
+      component.render();
     }
-  }
-
-  return statefulRender;
+  };
 };
