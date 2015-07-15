@@ -30,7 +30,7 @@
     "no-multiple-empty-lines": 0,
     "no-multiple-empty-lines": 1,
     "no-spaced-func"         : 2,
-    "no-underscore-dangle"   : 2,
+    "no-underscore-dangle"   : 0,
     "no-unused-expressions"  : 0,
     "no-unused-vars"         : [2, {"args": "none"}],
     "no-var"                 : 2,
