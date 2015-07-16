@@ -1,5 +1,5 @@
 import {checked, value} from '../helpers/dom.js';
-import stateful from '../helpers/stateful';
+import StatefulComponent from '../helpers/StatefulComponent';
 
 function handleBeginEditing(){
   this.setState({pendingTitle:this.props.todo.title, isEditing:true});
@@ -37,9 +37,11 @@ function handlePendingEditInput({which, target}){
   this.setState({pendingTitle:target.value, isEditing:this.state.isEditing});
 }
 
-export default stateful(
-  (props, state)=>({isEditing:false}),
-  function({key, todo, onTitleChange, onToggle, onDestroy}, {pendingTitle, isEditing}){
+export default StatefulComponent({
+  reduce:(props, state)=>({isEditing:false}),
+
+  render({key, todo, onTitleChange, onToggle, onDestroy}, {pendingTitle, isEditing}){
+    console.log('rendering', todo.title);
     let className = '';
     if(todo.completed) className += 'completed';
     if(isEditing) className += ' editing';
@@ -64,5 +66,10 @@ export default stateful(
           value={value(pendingTitle)} />
     	</li>
     );
-  }
-)
+  },
+
+  shouldUpdate:(props, prevProps)=>
+    props.todo.title !== prevProps.todo.title ||
+      props.todo.completed !== prevProps.todo.completed
+
+});
