@@ -1,4 +1,4 @@
-export default ({incompleteCount, onClearCompleted})=>{
+export default ({incompleteCount, onClearCompleted})=>
   <footer class="footer">
     <span class="todo-count">{incompleteCount} left</span>
     <ul class="filters">
@@ -10,4 +10,3 @@ export default ({incompleteCount, onClearCompleted})=>{
 			Clear completed
 		</button>
   </footer>;
-};

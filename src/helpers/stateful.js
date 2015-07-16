@@ -14,15 +14,17 @@ Requirements:
 
 */
 
-function Component(reduce, render){
+function Component(reduce, render, props){
   this.reduce   = reduce;
   this._render  = render;
-  this.state    = reduce();
-  this.props    = null;
+  this.state    = reduce(props);
+  this.props    = props;
   this.setState = this.setState.bind(this);
 }
 
-Component.prototype.render = function(){ this._render(this.props, this.state, this.setState); };
+Component.prototype.render = function(){
+  return this._render(this.props, this.state, this.setState);
+};
 
 // Called by the component to set the new state and re-render the component without re-rendering the
 // whole document
@@ -72,9 +74,13 @@ export default (reduce, render)=>{
 
       // To determine the component's root element, we ask IncrementalDOM to track the first
       // element rendered.
-      IncrementalDOM.elementTrackRoot();
-      component.render();
-      node = IncrementalDOM.elementGetRoot();
+      node = component.render();
+
+      // if(__DEV__){
+      if(!node){
+        console.log("Component render did not return a rendered node", component.render.toString());
+      }
+      // }
 
       rootNodeName = node.nodeName.toLowerCase();
       component.node = node;

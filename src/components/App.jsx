@@ -5,8 +5,8 @@ import TodoFooter from './TodoFooter.jsx';
 
 let nextId = 0;
 function Todo(title){
-  this.id = ++nextId;
-  this.title = title;
+  this.id        = ++nextId;
+  this.title     = title;
   this.completed = false;
 }
 
@@ -36,6 +36,11 @@ function handleDestroy(removeTodo){
   this.setState(this.state.filter(todo=>todo !== removeTodo));
 }
 
+function handleTitleChange(todo, newTitle){
+  todo.title = newTitle;
+  this.setState(this.state);
+}
+
 function handleClearCompleted(){
   this.setState(this.state.filter(todo=>!todo.completed));
 }
@@ -44,35 +49,37 @@ export default stateful(
   (props, todos)=>todos || INITIAL_TODOS,
   function(props, todos){
     const incompleteCount = todos.filter(t=>!t.completed).length;
-
-    <div class="todoapp">
-      <header class="header">
-        <h1>todos</h1>
-        <input
-          class="new-todo"
-          placeholder="What needs to be done?"
-          onkeydown={handleNewTodoKeyDown.bind(this)}
-          autoFocus={true} />
-      </header>
-      <section class="main">
-        <input
-          class="toggle-all"
-          type="checkbox"
-          onchange={handleToggleAll.bind(this)}
-          checked={checked(!incompleteCount)} />
-        <ul class="todo-list">
-          {todos.forEach(todo=>
-            <TodoItem
-              key={todo.id}
-              todo={todo}
-              onToggle={handleToggle.bind(this, todo)}
-              onDestroy={handleDestroy.bind(this, todo)} />
-          )}
-        </ul>
-      </section>
-      <TodoFooter
-        incompleteCount={incompleteCount}
-        onClearCompleted={handleClearCompleted.bind(this)} />
-    </div>;
+    return (
+      <div class="todoapp">
+        <header class="header">
+          <h1>todos</h1>
+          <input
+            class="new-todo"
+            placeholder="What needs to be done?"
+            onkeydown={handleNewTodoKeyDown.bind(this)}
+            autoFocus={true} />
+        </header>
+        <section class="main">
+          <input
+            class="toggle-all"
+            type="checkbox"
+            onchange={handleToggleAll.bind(this)}
+            checked={checked(!incompleteCount)} />
+          <ul class="todo-list">
+            {todos.forEach(todo=>
+              <TodoItem
+                key={todo.id}
+                todo={todo}
+                onTitleChange={handleTitleChange.bind(this, todo)}
+                onToggle={handleToggle.bind(this, todo)}
+                onDestroy={handleDestroy.bind(this, todo)} />
+            )}
+          </ul>
+        </section>
+        <TodoFooter
+          incompleteCount={incompleteCount}
+          onClearCompleted={handleClearCompleted.bind(this)} />
+      </div>
+    );
   }
 );
