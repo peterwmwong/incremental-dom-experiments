@@ -1,3 +1,8 @@
+import {alignWithDOM} from 'incremental-dom/src/alignment.js';
+import {getWalker} from 'incremental-dom/src/walker.js';
+import {getData} from 'incremental-dom/src/node_data.js';
+import {nextSibling} from 'incremental-dom/src/traversal.js';
+
 /*
 
 Statefull components that can decide whether they need to be re-rendered to improve performance.
@@ -32,11 +37,10 @@ Component.prototype.setState = function(newState){
   this.state = newState;
 
   IncrementalDOM.patch(parentNode, ()=>{
+    const walker = getWalker();
     // Skip over all siblings before component's element
-    let curNode = parentNode.firstChild;
-    while(curNode !== this.node){
-      IncrementalDOM.skipNextElement();
-      curNode = curNode.nextSibling;
+    while(walker.currentNode !== this.node){
+      nextSibling();
     }
 
     this.render();
@@ -44,7 +48,7 @@ Component.prototype.setState = function(newState){
     // Mark the last child as visited so IncrementalDOM
     // doesn't truncate all sibling elements after the
     // component's element
-    IncrementalDOM.markVisited(parentNode.lastChild);
+    getData(parentNode).lastVisitedChild = parentNode.lastChild;
   });
 };
 
@@ -60,15 +64,15 @@ export default ({reduce, render, shouldUpdate})=>{
   let rootNodeName;
 
   return props=>{
-    let component;
     const key = props && props.key;
 
     // Asking IncrementalDOM whether we are going to be re-rendering an existing component
     // or rendering a new component.
-    let node = rootNodeName && IncrementalDOM.getMatchingNode(rootNodeName, key);
+    let node      = rootNodeName && alignWithDOM(rootNodeName, key);
+    let component = node && node.__component;
 
     // Render a new component
-    if(!node){
+    if(!component){
       component = new Component(reduce, render, props, shouldUpdate);
 
       // To determine the component's root element, we ask IncrementalDOM to track the first
@@ -87,14 +91,13 @@ export default ({reduce, render, shouldUpdate})=>{
     }
     // Parent re-render
     else{
-      component = node.__component;
       let prevProps = component.props;
       component.props = props;
       if(!component.shouldUpdate || component.shouldUpdate(props, prevProps)) {
         component.render();
       }
       else{
-        IncrementalDOM.skipNextElement();
+        nextSibling();
       }
     }
   };

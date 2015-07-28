@@ -1,20 +1,19 @@
-import Component from '../helpers/Component';
+import StatefulComponent from '../helpers/StatefulComponent';
 
-export default Component({
+export default StatefulComponent({
+  reduce(){},
   render:({incompleteCount, onClearCompleted})=>
-    <footer class="footer">
-      <span class="todo-count">{incompleteCount} left</span>
-      <ul class="filters">
-        <li><a href="#/" class="selected">All</a></li>&nbsp;
-        <li><a href="#/active" class="selected">Active</a></li>&nbsp;
-        <li><a href="#/completed" class="selected">Completed</a></li>
+    <footer className="footer">
+      <span className="todo-count">{incompleteCount} left</span>
+      <ul className="filters">
+        <li><a href="#/" className="selected">All</a></li>&nbsp;
+        <li><a href="#/active" className="selected">Active</a></li>&nbsp;
+        <li><a href="#/completed" className="selected">Completed</a></li>
       </ul>
-  		<button class="clear-completed" onclick={onClearCompleted}>
+  		<button className="clear-completed" onclick={onClearCompleted}>
   			Clear completed
   		</button>
     </footer>,
 
-  shouldUpdate:(props, prevProps)=>
-    props.incompleteCount !== props.incompleteCount ||
-      props.onClearCompleted !== prevProps.onClearCompleted
+  shouldUpdate:(props, prevProps)=>props.incompleteCount !== prevProps.incompleteCount
 });

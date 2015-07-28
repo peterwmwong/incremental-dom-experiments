@@ -1,3 +1,7 @@
+import {alignWithDOM} from 'incremental-dom/src/alignment.js';
+import {getWalker} from 'incremental-dom/src/walker.js';
+import {nextSibling, markVisited} from 'incremental-dom/src/traversal.js';
+
 /*
 
 Allows defining stateful components
@@ -33,11 +37,12 @@ Component.prototype.setState = function(newState){
   this.state = newState;
 
   IncrementalDOM.patch(parentNode, ()=>{
+    const walker = getWalker();
     // Skip over all siblings before component's element
-    let curNode = parentNode.firstChild;
+    let curNode = walker.currentNode;
     while(curNode !== this.node){
-      IncrementalDOM.skipNextElement();
-      curNode = curNode.nextSibling;
+      nextSibling();
+      curNode = walker.currentNode;
     }
 
     this.render();
@@ -45,7 +50,7 @@ Component.prototype.setState = function(newState){
     // Mark the last child as visited so IncrementalDOM
     // doesn't truncate all sibling elements after the
     // component's element
-    IncrementalDOM.markVisited(parentNode.lastChild);
+    markVisited(parentNode.lastChild);
   });
 };
 
@@ -66,7 +71,7 @@ export default (reduce, render)=>{
 
     // Asking IncrementalDOM whether we are going to be re-rendering an existing component
     // or rendering a new component.
-    let node = rootNodeName && IncrementalDOM.getMatchingNode(rootNodeName, key);
+    let node = rootNodeName && alignWithDOM(rootNodeName, key);
 
     // Render a new component
     if(!node){

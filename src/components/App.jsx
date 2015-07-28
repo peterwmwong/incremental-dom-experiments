@@ -1,35 +1,42 @@
-import {checked} from '../helpers/dom.js';
-import stateful from '../helpers/stateful';
-import TodoItem   from './TodoItem.jsx';
-import TodoFooter from './TodoFooter.jsx';
+import StatefulComponent from '../helpers/StatefulComponent';
+import TodoItem          from './TodoItem.jsx';
+import TodoFooter        from './TodoFooter.jsx';
 
 let nextId = 0;
-function Todo(title){
-  this.id        = ++nextId;
+function Todo({id, title, completed}){
+  this.id        = id || ++nextId;
   this.title     = title;
-  this.completed = false;
+  this.completed = completed == null ? false : completed;
 }
 
-const INITIAL_TODOS = [
-  new Todo('one'),
-  new Todo('two'),
-  new Todo('three')
-];
+const INITIAL_TODOS = [];
+
+(()=>{
+  for(let i=0; i<1000; ++i){
+    INITIAL_TODOS.push(new Todo({title: `todo ${i}`}));
+  }
+})();
 
 function handleNewTodoKeyDown({which, target}){
   if(which === 13){
-    this.setState(this.state.concat([new Todo(target.value)]));
+    this.setState(this.state.concat([new Todo({title: target.value})]));
     target.value = '';
   }
 }
 
-function handleToggleAll(e){
-  this.setState(this.state.map(todo=>((todo.completed = e.target.checked), todo)));
+function handleToggleAll({target}){
+  const setCompleted = target.checked;
+  this.setState(
+    this.state.map(todo=>new Todo({...todo, completed: setCompleted}))
+  );
 }
 
 function handleToggle(todo){
-  todo.completed = !todo.completed;
-  this.setState(this.state);
+  this.setState(
+    this.state.map(t=>
+      t === todo ? new Todo({...t, completed: !t.completed}) : t
+    )
+  );
 }
 
 function handleDestroy(removeTodo){
@@ -37,35 +44,48 @@ function handleDestroy(removeTodo){
 }
 
 function handleTitleChange(todo, newTitle){
-  todo.title = newTitle;
-  this.setState(this.state);
+  this.setState(
+    this.state.map(t=>
+      t === todo ? new Todo({...t, title: newTitle}) : t
+    )
+  );
 }
 
 function handleClearCompleted(){
   this.setState(this.state.filter(todo=>!todo.completed));
 }
 
-export default stateful(
-  (props, todos)=>todos || INITIAL_TODOS,
-  function(props, todos){
-    const incompleteCount = todos.filter(t=>!t.completed).length;
+function getIncompleteCount(todos){
+  let incompleteCount = 0;
+  for(let i=0; i<todos.length; ++i){
+    if(!todos[i].completed) ++incompleteCount;
+  }
+  return incompleteCount;
+}
+
+export default StatefulComponent({
+  reduce:(props, todos)=>todos || INITIAL_TODOS,
+
+
+  render(props, todos){
+    let incompleteCount = getIncompleteCount(todos);
     return (
-      <div class="todoapp">
-        <header class="header">
+      <div className="todoapp">
+        <header className="header">
           <h1>todos</h1>
           <input
-            class="new-todo"
+            className="new-todo"
             placeholder="What needs to be done?"
             onkeydown={handleNewTodoKeyDown.bind(this)}
             autoFocus={true} />
         </header>
-        <section class="main">
+        <section className="main">
           <input
-            class="toggle-all"
+            className="toggle-all"
             type="checkbox"
             onchange={handleToggleAll.bind(this)}
-            checked={checked(!incompleteCount)} />
-          <ul class="todo-list">
+            checked={!incompleteCount} />
+          <ul className="todo-list">
             {todos.forEach(todo=>
               <TodoItem
                 key={todo.id}
@@ -73,7 +93,7 @@ export default stateful(
                 onTitleChange={handleTitleChange.bind(this, todo)}
                 onToggle={handleToggle.bind(this, todo)}
                 onDestroy={handleDestroy.bind(this, todo)} />
-            )}
+            ),''}
           </ul>
         </section>
         <TodoFooter
@@ -82,4 +102,4 @@ export default stateful(
       </div>
     );
   }
-);
+});

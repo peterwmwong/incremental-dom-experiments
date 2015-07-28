@@ -1,5 +1,6 @@
 {
   "blacklist": ["react"],
   "plugins": ["incremental-dom"],
-  "loose": "all"
+  "loose": "all",
+  "stage": 1
 }

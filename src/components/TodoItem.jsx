@@ -1,4 +1,3 @@
-import {checked, value} from '../helpers/dom.js';
 import StatefulComponent from '../helpers/StatefulComponent';
 
 function handleBeginEditing(){
@@ -11,7 +10,7 @@ function handleEndEditing(){
 
 function handleCommitEdit(){
   if(this.state.isEditing){
-    this.props.todo.title = this.state.pendingTitle;
+    this.props.onTitleChange(this.state.pendingTitle);
     handleEndEditing.call(this);
   }
 }
@@ -41,35 +40,32 @@ export default StatefulComponent({
   reduce:(props, state)=>({isEditing:false}),
 
   render({key, todo, onTitleChange, onToggle, onDestroy}, {pendingTitle, isEditing}){
-    console.log('rendering', todo.title);
     let className = '';
     if(todo.completed) className += 'completed';
-    if(isEditing) className += ' editing';
+    if(isEditing)      className += ' editing';
 
     return (
-    	<li class={className} key={key}>
-    		<div class="view">
+    	<li className={className} key={key}>
+    		<div className="view">
     			<input
-    				class="toggle"
+    				className="toggle"
     				type="checkbox"
-    				checked={checked(todo.completed)}
+    				checked={todo.completed}
     				onchange={onToggle} />
           <label ondblclick={handleBeginEditing.bind(this)}>{todo.title}</label>
-    			<button class="destroy" onclick={onDestroy} />
+    			<button className="destroy" onclick={onDestroy} />
     		</div>
     		<input
           type="text"
-          class="edit"
+          className="edit"
           onblur={handleCommitEdit.bind(this)}
           onkeydown={handlePendingEditKeydown.bind(this)}
           oninput={handlePendingEditInput.bind(this)}
-          value={value(pendingTitle)} />
+          value={pendingTitle} />
     	</li>
     );
   },
 
-  shouldUpdate:(props, prevProps)=>
-    props.todo.title !== prevProps.todo.title ||
-      props.todo.completed !== prevProps.todo.completed
+  shouldUpdate:(props, prevProps)=>props.todo !== prevProps.todo
 
 });
