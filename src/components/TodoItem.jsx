@@ -37,7 +37,7 @@ function handlePendingEditInput({which, target}){
 }
 
 export default StatefulComponent({
-  reduce:(props, state)=>({isEditing:false}),
+  getInitialState:(props, state)=>({isEditing:false}),
 
   render({key, todo, onTitleChange, onToggle, onDestroy}, {pendingTitle, isEditing}){
     let className = '';
@@ -67,5 +67,4 @@ export default StatefulComponent({
   },
 
   shouldUpdate:(props, prevProps)=>props.todo !== prevProps.todo
-
 });

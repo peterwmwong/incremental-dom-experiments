@@ -12,7 +12,7 @@ function Todo({id, title, completed}){
 const INITIAL_TODOS = [];
 
 (()=>{
-  for(let i=0; i<1000; ++i){
+  for(let i=0; i<10; ++i){
     INITIAL_TODOS.push(new Todo({title: `todo ${i}`}));
   }
 })();
@@ -64,7 +64,7 @@ function getIncompleteCount(todos){
 }
 
 export default StatefulComponent({
-  reduce:(props, todos)=>todos || INITIAL_TODOS,
+  getInitialState:(props, todos)=>todos || INITIAL_TODOS,
 
 
   render(props, todos){

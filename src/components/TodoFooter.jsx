@@ -1,7 +1,6 @@
 import StatefulComponent from '../helpers/StatefulComponent';
 
 export default StatefulComponent({
-  reduce(){},
   render:({incompleteCount, onClearCompleted})=>
     <footer className="footer">
       <span className="todo-count">{incompleteCount} left</span>
