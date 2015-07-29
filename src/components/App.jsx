@@ -1,41 +1,54 @@
 import "./App.css";
-import statefulComponent from "../helpers/StatefulComponent";
-import RecipeList from "./RecipeList.jsx";
 
-const App = statefulComponent({
-  render({recipes}){
-    return (
-      <div className="App">
-        <header className="App-header">Recipes</header>
-        <section className="App-content">
-          <RecipeList recipes={recipes} />
-        </section>
-        <aside className="App-drawer">
-          drawer
-        </aside>
-      </div>
-    );
+import statefulComponent from "../helpers/statefulComponent";
+import RecipeList        from "./RecipeList.jsx";
+import Recipe            from "../models/Recipe.js";
+
+const PAGE_LIST   = "List";
+const PAGE_RECIPE = "Recipe";
+
+function renderPage({page, recipes}){
+  if(page === PAGE_LIST){
+    <div>
+      <header className="App-toolbar">
+        Recipes
+        <span className='App-toolbar__icon App-toolbar__right-item'>+</span>
+      </header>
+      <section className="App-content">
+        <RecipeList recipes={recipes} />
+      </section>
+    </div>;
   }
-});
-
-let nextRecipeId = 0;
-function Recipe({id, title, ingredients, directions}){
-  this.id          = id || ++nextRecipeId;
-  this.title       = title;
-  this.ingredients = ingredients || [];
-  this.directions  = directions || [];
+  else if(page === PAGE_RECIPE){
+    <div>
+      <header className="App-toolbar">
+        Recipes
+        <span className='App-toolbar__icon App-toolbar__right-item'>+</span>
+      </header>
+      <section className="App-content">
+        <RecipeList recipes={recipes} />
+      </section>
+    </div>;
+  }
+  return "";
 }
 
 export default statefulComponent({
-  reduce:(props, recipes)=>([
-    new Recipe({
-      title:"Recipe One",
-      ingredients:[
-        "onion",
-        "carrots"
-      ]
-    })
-  ]),
-  render:(props, recipes)=>
-    <App recipes={recipes}/>
+  getInitialState:props=>({
+    page: PAGE_LIST,
+    recipes: [
+      new Recipe({
+        title:"Recipe One",
+        ingredients:[
+          "onion",
+          "carrots"
+        ]
+      })
+    ]
+  }),
+
+  render:(props, state)=>
+    <div className="App">
+      {renderPage(state)}
+    </div>
 });

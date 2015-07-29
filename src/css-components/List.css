@@ -1,7 +1,44 @@
-.List {
+/*========================================================================
+  List
+  ========================================================================*/
 
+.List {
+  margin: 0;
+  padding: 0 16px;
 }
 
-.List-item {
+.List__item {
+  list-style-type : none;
+  padding: 12px 0;
+  font-size: 1.6rem;
+}
 
+.List__item.List__item--header {
+  color       : #AAA;
+  font-size   : 1.4rem;
+  font-weight : 500;
+  padding     : 24px 0 8px 0;
+  position    : relative;
+}
+
+.List__item.List__item--header:first-child:before {
+  display: none;
+}
+.List__item.List__item--header:first-child {
+  padding: 16px 0 8px 0;
+}
+
+.List__item.List__item--header:before {
+  position : absolute;
+    top    :   4px;
+    right  : -16px;
+    left   : -16px;
+
+  background : #EEE;
+  content    : '';
+  height     : 1px;
+}
+
+.List__item.List__item--header.List__item--no-border:before {
+  display: none;
 }

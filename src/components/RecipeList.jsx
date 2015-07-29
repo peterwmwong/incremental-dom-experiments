@@ -1,10 +1,13 @@
-import statefulComponent from "../helpers/StatefulComponent";
+import statefulComponent from "../helpers/statefulComponent";
 
 export default statefulComponent({
   render:({recipes})=>
-    <ul className="todo-list">
+    <ul className="List">
+      <li className="List__item List__item--header" key="RECIPE_HEADER">
+        Recipes
+      </li>
       {recipes.forEach(recipe=>
-        <li>{recipe.title}</li>
+        <li className="List__item" key={recipe.id}>{recipe.title}</li>
       ), ""}
     </ul>
 });

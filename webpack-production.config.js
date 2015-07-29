@@ -1,5 +1,5 @@
-var config  = require('./webpack.config.js');
-var webpack = require('webpack');
+var config  = require("./webpack.config.js");
+var webpack = require("webpack");
 
 config.plugins.push(
   new webpack.optimize.UglifyJsPlugin({
@@ -7,6 +7,6 @@ config.plugins.push(
   })
 );
 
-config.devtool = 'source-map';
+config.devtool = "source-map";
 
 module.exports = config;

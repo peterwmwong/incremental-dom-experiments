@@ -2,7 +2,41 @@
 
 html,
 body {
-  height: 100%;
-  font-family: Helvetica, sans-serif;
+  font-family: "RobotoDraft", Helvetica, sans-serif;
   font-size: 10px;
+  font-weight: 400;
+  height: 100%;
+  margin:0;
+  padding:0;
+}
+
+/*========================
+  links
+  ========================*/
+
+a {
+  cursor: pointer;
+}
+
+/*========================
+  inputs
+  ========================*/
+
+input,
+textarea {
+  border      : none;
+  box-sizing  : border-box;
+  font-size   : inherit;
+  font-family : inherit;
+  font-weight : inherit;
+  margin      : 0;
+  outline     : none;
+  padding     : 0;
+  resize      : none;
+  width       : 100%;
+}
+
+::-webkit-input-placeholder {
+  color      : #DDD;
+  font-style : italic;
 }
