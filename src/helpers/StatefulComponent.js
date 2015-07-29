@@ -63,7 +63,7 @@ export default ({getInitialState, render, shouldUpdate})=>{
   //   - Re-render
   //
   // We can determine this by asking IncrementalDOM whether we're about to render to an existing
-  // node (`IncrementalDOM.getMatchingNode(nodeName, key)`).
+  // node (`alignWithDOM(nodeName, key)`).
   // The node name isn't known at the time of component declaration, but can be determined on
   // the very first render.
   let rootNodeName;
