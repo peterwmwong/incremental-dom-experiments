@@ -20,7 +20,7 @@ Requirements:
 function Component(reduce, render, props, shouldUpdate){
   this.reduce       = reduce;
   this._render      = render;
-  this.state        = reduce(props);
+  this.state        = reduce && reduce(props);
   this.props        = props;
   this.setState     = this.setState.bind(this);
   this.shouldUpdate = shouldUpdate;
@@ -81,7 +81,7 @@ export default ({reduce, render, shouldUpdate})=>{
 
       // if(__DEV__){
       if(!node){
-        console.log("Component render did not return a rendered node", component.render.toString());
+        console.log("Component render did not return a rendered node", component.render.toString()); //eslint-disable-line
       }
       // }
 
@@ -93,12 +93,14 @@ export default ({reduce, render, shouldUpdate})=>{
     else{
       let prevProps = component.props;
       component.props = props;
-      if(!component.shouldUpdate || component.shouldUpdate(props, prevProps)) {
+      if(!component.shouldUpdate || component.shouldUpdate(props, prevProps)){
         component.render();
       }
       else{
         nextSibling();
       }
     }
+    
+    return component.node;
   };
 };

@@ -53,6 +53,9 @@ Requirements:
 
 */
 
+import {nextSibling} from 'incremental-dom/src/traversal.js';
+
+
 export default (componentSpec)=>{
   // When rendering a component, we need to determine whether it's one of the following cases:
   //   - Initial render
@@ -83,7 +86,7 @@ export default (componentSpec)=>{
 
       // if(__DEV__){
       if(!node){
-        console.log("Component render did not return a rendered node", component.render.toString());
+        console.log("Component render did not return a rendered node", component.render.toString()); //eslint-disable-line
       }
       // }
 
@@ -92,11 +95,13 @@ export default (componentSpec)=>{
     // Parent re-render
     else{
       // Ask component whether we need re-render or not
-      if(componentSpec.shouldUpdate(props, node.__componentProps)){
+      let prevProps = component.props;
+      componentSpec.props = props;
+      if(!component.shouldUpdate || component.shouldUpdate(props, prevProps)){
         componentSpec.render(props);
       }
-      else {
-        IncrementalDOM.skipNextElement();
+      else{
+        nextSibling();
       }
     }
   };

@@ -1,105 +1,41 @@
-import StatefulComponent from '../helpers/StatefulComponent';
-import TodoItem          from './TodoItem.jsx';
-import TodoFooter        from './TodoFooter.jsx';
+import "./App.css";
+import statefulComponent from "../helpers/StatefulComponent";
+import RecipeList from "./RecipeList.jsx";
 
-let nextId = 0;
-function Todo({id, title, completed}){
-  this.id        = id || ++nextId;
-  this.title     = title;
-  this.completed = completed == null ? false : completed;
-}
-
-const INITIAL_TODOS = [];
-
-(()=>{
-  for(let i=0; i<1000; ++i){
-    INITIAL_TODOS.push(new Todo({title: `todo ${i}`}));
-  }
-})();
-
-function handleNewTodoKeyDown({which, target}){
-  if(which === 13){
-    this.setState(this.state.concat([new Todo({title: target.value})]));
-    target.value = '';
-  }
-}
-
-function handleToggleAll({target}){
-  const setCompleted = target.checked;
-  this.setState(
-    this.state.map(todo=>new Todo({...todo, completed: setCompleted}))
-  );
-}
-
-function handleToggle(todo){
-  this.setState(
-    this.state.map(t=>
-      t === todo ? new Todo({...t, completed: !t.completed}) : t
-    )
-  );
-}
-
-function handleDestroy(removeTodo){
-  this.setState(this.state.filter(todo=>todo !== removeTodo));
-}
-
-function handleTitleChange(todo, newTitle){
-  this.setState(
-    this.state.map(t=>
-      t === todo ? new Todo({...t, title: newTitle}) : t
-    )
-  );
-}
-
-function handleClearCompleted(){
-  this.setState(this.state.filter(todo=>!todo.completed));
-}
-
-function getIncompleteCount(todos){
-  let incompleteCount = 0;
-  for(let i=0; i<todos.length; ++i){
-    if(!todos[i].completed) ++incompleteCount;
-  }
-  return incompleteCount;
-}
-
-export default StatefulComponent({
-  reduce:(props, todos)=>todos || INITIAL_TODOS,
-
-
-  render(props, todos){
-    let incompleteCount = getIncompleteCount(todos);
+const App = statefulComponent({
+  render({recipes}){
     return (
-      <div className="todoapp">
-        <header className="header">
-          <h1>todos</h1>
-          <input
-            className="new-todo"
-            placeholder="What needs to be done?"
-            onkeydown={handleNewTodoKeyDown.bind(this)}
-            autoFocus={true} />
-        </header>
-        <section className="main">
-          <input
-            className="toggle-all"
-            type="checkbox"
-            onchange={handleToggleAll.bind(this)}
-            checked={!incompleteCount} />
-          <ul className="todo-list">
-            {todos.forEach(todo=>
-              <TodoItem
-                key={todo.id}
-                todo={todo}
-                onTitleChange={handleTitleChange.bind(this, todo)}
-                onToggle={handleToggle.bind(this, todo)}
-                onDestroy={handleDestroy.bind(this, todo)} />
-            ),''}
-          </ul>
+      <div className="App">
+        <header className="App-header">Recipes</header>
+        <section className="App-content">
+          <RecipeList recipes={recipes} />
         </section>
-        <TodoFooter
-          incompleteCount={incompleteCount}
-          onClearCompleted={handleClearCompleted.bind(this)} />
+        <aside className="App-drawer">
+          drawer
+        </aside>
       </div>
     );
   }
+});
+
+let nextRecipeId = 0;
+function Recipe({id, title, ingredients, directions}){
+  this.id          = id || ++nextRecipeId;
+  this.title       = title;
+  this.ingredients = ingredients || [];
+  this.directions  = directions || [];
+}
+
+export default statefulComponent({
+  reduce:(props, recipes)=>([
+    new Recipe({
+      title:"Recipe One",
+      ingredients:[
+        "onion",
+        "carrots"
+      ]
+    })
+  ]),
+  render:(props, recipes)=>
+    <App recipes={recipes}/>
 });
