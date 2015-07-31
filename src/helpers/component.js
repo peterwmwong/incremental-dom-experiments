@@ -7,7 +7,7 @@ Example:
 
 ```
 // Using Babel/JSX
-const Greeter = StatefulComponent({
+const Greeter = component({
   render: props=>
     <span>Hello {props.name}!</span>,
 
@@ -21,9 +21,8 @@ Incremental.patch(rootNode, ()=>{
   </div>
 });
 
-
 // ES5/IncrementalDOM (compiled from above)
-var Greeter = StatefulComponent({
+var Greeter = component({
   render: function render(props) {
     return (
       IncrementalDOM.elementOpen("span"),
@@ -51,13 +50,60 @@ Requirements:
 - Handle component re-render (setState called)
 
 */
-
 import {alignWithDOM} from "incremental-dom/src/alignment.js";
 import {getWalker}    from "incremental-dom/src/walker.js";
 import {getData}      from "incremental-dom/src/node_data.js";
 import {nextSibling}  from "incremental-dom/src/traversal.js";
 
-export default function({getInitialState, render, shouldUpdate}){
+const setPrototypeOf = Object.setPrototypeOf || function(obj, proto){
+  obj.__proto__ = proto; //eslint-disable-line
+  return obj;
+};
+
+const componentPrototype = {
+  constructor(){},
+  shouldUpdate(){ return true; },
+  render(){},
+
+  setState(newState){
+    this.state = newState;
+    IncrementalDOM.patch(this.node.parentNode, this._rerender);
+  },
+
+  _rerender(){
+    const parentNode = this.node.parentNode;
+    const walker     = getWalker();
+
+    // Skip over all siblings before component's element
+    while(walker.currentNode !== this.node){
+      nextSibling();
+    }
+
+    this._render();
+
+    // Mark the last child as visited so IncrementalDOM
+    // doesn't truncate all sibling elements after the
+    // component's element
+    getData(parentNode).lastVisitedChild = parentNode.lastChild;
+  },
+
+  _render(){
+    this.node = this.render(this.props, this.state, this.setState);
+    this.node.__component = this;
+    return this.node;
+  }
+};
+
+export default function(spec){
+  function Component(props){
+    this.node      = null;
+    this.props     = props;
+    this._rerender = this._rerender.bind(this);
+    this.constructor(props);
+  }
+
+  Component.prototype = setPrototypeOf(spec, componentPrototype);
+
   // When rendering a component, we need to determine whether it's one of the following cases:
   //   - Initial render
   //   - Re-render
@@ -78,28 +124,15 @@ export default function({getInitialState, render, shouldUpdate}){
 
     // Render a new component
     if(!component){
-      component = new Component(getInitialState, render, props, shouldUpdate);
-
-      // To determine the component's root element, we ask IncrementalDOM to track the first
-      // element rendered.
-      node = component.render();
-
-      // if(__DEV__){
-      if(!node){
-        console.log("Component render did not return a rendered node", component.render.toString()); //eslint-disable-line
-      }
-      // }
-
-      rootNodeName = node.nodeName.toLowerCase();
-      component.node = node;
-      node.__component = component;
+      component = new Component(props);
+      rootNodeName = component._render().nodeName.toLowerCase();
     }
     // Parent re-render
     else{
-      let prevProps = component.props;
+      const prevProps = component.props;
       component.props = props;
-      if(!component.shouldUpdate || component.shouldUpdate(props, prevProps)){
-        component.render();
+      if(component.shouldUpdate(props, prevProps)){
+        component._render();
       }
       else{
         nextSibling();
@@ -109,37 +142,3 @@ export default function({getInitialState, render, shouldUpdate}){
     return component.node;
   };
 }
-
-function Component(getInitialState, render, props, shouldUpdate){
-  this._render         = render;
-  this.state           = getInitialState && getInitialState(props);
-  this.props           = props;
-  this.setState        = this.setState.bind(this);
-  this.shouldUpdate    = shouldUpdate;
-}
-
-Component.prototype.render = function(){
-  return this._render(this.props, this.state, this.setState);
-};
-
-// Called by the component to set the new state and re-render the component without re-rendering the
-// whole document
-Component.prototype.setState = function(newState){
-  const parentNode = this.node.parentNode;
-  this.state = newState;
-
-  IncrementalDOM.patch(parentNode, ()=>{
-    const walker = getWalker();
-    // Skip over all siblings before component's element
-    while(walker.currentNode !== this.node){
-      nextSibling();
-    }
-
-    this.render();
-
-    // Mark the last child as visited so IncrementalDOM
-    // doesn't truncate all sibling elements after the
-    // component's element
-    getData(parentNode).lastVisitedChild = parentNode.lastChild;
-  });
-};

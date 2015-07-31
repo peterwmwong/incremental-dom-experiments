@@ -24,6 +24,7 @@ module.exports = {
     ]
   },
   plugins: [
+    new webpack.optimize.OccurenceOrderPlugin(),
     new ExtractTextPlugin("main.css"),
     new HtmlWebpackPlugin({
       title   : "prezmeplease",

@@ -12,7 +12,8 @@
     "IncrementalDOM": true
   },
   "ecmaFeatures": {
-    "modules": true
+    "modules": true,
+    "jsx"    : true
   },
   "rules": {
     "brace-style"            : [2, "stroustrup", {"allowSingleLine": true}],
