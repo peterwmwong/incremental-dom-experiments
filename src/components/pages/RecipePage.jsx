@@ -5,8 +5,10 @@ export default component({
     return (
       <div key={key}>
         <header className="App-toolbar">
-          {recipe.title}
+          {recipe.title || ""}
           <a className="App-toolbar__icon" onclick={onClose}>&lt;</a>
+          {!this.isNewRecipe(recipe) ? "" :
+            <a className="App-toolbar__icon App-toolbar__right-item">Save</a>}
         </header>
 
         <section className="App-content">
@@ -43,6 +45,8 @@ export default component({
       </div>
     );
   },
+
+  isNewRecipe:recipe=>!!recipe.id,
 
   handleAddIngredient({target}){
     this.props.recipe.ingredients.push(target.value);

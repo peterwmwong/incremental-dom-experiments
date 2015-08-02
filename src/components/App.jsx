@@ -1,47 +1,67 @@
 import "./App.css";
 
-import component      from "../helpers/component.js";
-import RecipeListPage from "./pages/RecipeListPage.jsx";
-import RecipePage     from "./pages/RecipePage.jsx";
-import Recipe         from "../models/Recipe.js";
+import component                       from "../helpers/component.js";
+import rerenderNode                    from "../helpers/rerenderNode.js";
+import RecipeListPage                  from "./pages/RecipeListPage.jsx";
+import RecipePage                      from "./pages/RecipePage.jsx";
 
-const PAGE_LIST   = "List";
-const PAGE_RECIPE = "Recipe";
-const ALL_RECIPES = Recipe.query();
+import {RECIPE_PAGE, RECIPE_LIST_PAGE}  from "../constants/Pages.js";
+import {viewRecipe, viewRecipeList}     from "../actions/ViewActions.js";
+import { createStore, combineReducers } from "redux/lib/index.js";
+import * as reducers                    from "../reducers";
 
-export default component({
-  constructor(props){
-    this.state = {
-      // page           : PAGE_RECIPE,
-      // selectedRecipe : ALL_RECIPES[0]
+const STORE    = createStore(combineReducers(reducers));
+const dispatch = STORE.dispatch;
 
-      page:PAGE_LIST,
-      recipes:ALL_RECIPES
-    };
-  },
+function connect(render){
+  function doRender(){ return render(STORE.getState()); }
 
-  render(props, {page, selectedRecipe, recipes}){
-    return (
-      <div className="App">
-        {page === PAGE_LIST &&
-          <RecipeListPage
-            key="APP_RECIPE_LIST_PAGE"
-            recipes={recipes}
-            onSelect={::this.handleRecipeSelect} />, ""}
-        {page === PAGE_RECIPE &&
-          <RecipePage
-            key="APP_RECIPE_PAGE"
-            recipe={selectedRecipe}
-            onClose={::this.handleCloseRecipe} />, ""}
-      </div>
-    );
-  },
-
-  handleRecipeSelect(selectedRecipe){
-    this.setState({page:PAGE_RECIPE, selectedRecipe});
-  },
-
-  handleCloseRecipe(){
-    this.setState({page:PAGE_LIST, recipes:Recipe.query()});
+  const node = doRender();
+  if(!node.__connect_unsubscribe){
+    node.__connect_unsubscribe = STORE.subscribe(()=>{
+      if(node.parentNode){
+        rerenderNode(node, doRender);
+      }
+      else{
+        node.__connect_unsubscribe();
+      }
+    });
   }
-});
+  return node;
+}
+
+export default connect(state=>({view:state.view}))(
+  component({
+    render({view}){
+      return (
+        <div className="App">
+          {view.page === RECIPE_LIST_PAGE &&
+            <RecipeListPage
+              key="APP_RECIPE_LIST_PAGE"
+              recipes={recipes}
+              onSelect={::this.handleRecipeSelect}
+              onNew={::this.handleNewRecipe} />, ""}
+          {view.page === RECIPE_PAGE &&
+            <RecipePage
+              key="APP_RECIPE_PAGE"
+              recipe={view.recipe}
+              onClose={::this.handleCloseRecipe} />, ""}
+        </div>
+      );
+    },
+
+    handleRecipeSelect(selectedRecipe){
+      dispatch(viewRecipe(selectedRecipe));
+    },
+
+    handleNewRecipe(){
+      // const newRecipe = new Recipe({});
+      // newRecipe.id = null;
+      // this.setState({page:PAGE_RECIPE, selectedRecipe:newRecipe});
+    },
+
+    handleCloseRecipe(){
+      dispatch(viewRecipeList());
+    }
+  })
+);

@@ -54,6 +54,7 @@ import {alignWithDOM} from "incremental-dom/src/alignment.js";
 import {getWalker}    from "incremental-dom/src/walker.js";
 import {getData}      from "incremental-dom/src/node_data.js";
 import {nextSibling}  from "incremental-dom/src/traversal.js";
+// import rerenderNode   from "./rerenderNode.js";
 
 const setPrototypeOf = Object.setPrototypeOf || function(obj, proto){
   obj.__proto__ = proto; //eslint-disable-line
@@ -68,6 +69,7 @@ const componentPrototype = {
   setState(newState){
     this.state = newState;
     IncrementalDOM.patch(this.node.parentNode, this._rerender);
+    // rerenderNode(this._render, this.node);
   },
 
   _rerender(){
