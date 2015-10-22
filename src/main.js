@@ -1,10 +1,8 @@
 import 'todomvc-app-css/index.css';
+import 'xvdom';
+import App from './components/App.jsx';
 
-import IncrementalDOM from 'incremental-dom';
-import App            from './components/App.jsx';
-
-window.IncrementalDOM = IncrementalDOM;
-IncrementalDOM.attributes.applyAttr = function(el, name, value) {
-  el[name] = value;
-};
-IncrementalDOM.patch(window.APP, App);
+const body = document.body = document.body || document.createElement('body');
+body.appendChild(
+  xvdom.renderInstance(<div><App /></div>)
+);

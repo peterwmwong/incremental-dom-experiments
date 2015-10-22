@@ -6,10 +6,10 @@
   "parser": "babel-eslint",
   "plugins": [ "react" ],
   "globals": {
-    "IS_DEV"        : true,
-    "IS_MOCKING"    : true,
-    "module"        : true,
-    "IncrementalDOM": true
+    "IS_DEV"     : true,
+    "IS_MOCKING" : true,
+    "module"     : true,
+    "xvdom"      : true
   },
   "ecmaFeatures": {
     "modules": true
@@ -34,7 +34,7 @@
     "no-unused-expressions"  : 0,
     "no-unused-vars"         : [2, {"args": "none"}],
     "no-var"                 : 2,
-    "object-shorthand"       : [2, "always"],
+    "object-shorthand"       : [0, "always"],
     "quotes"                 : [2, "single", "avoid-escape"],
     "space-before-blocks"    : [2, "never"],
     "strict"                 : 0
