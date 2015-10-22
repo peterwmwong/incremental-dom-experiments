@@ -10,7 +10,7 @@
     "babel-plugin-xvdom": "peterwmwong/babel-plugin-xvdom#api-func2",
     "css-loader": "^0.15.3",
     "eslint": "^1.7.3",
-    "eslint-plugin-react": "^2.7.0",
+    "eslint-plugin-react": "^3.6.3",
     "extract-text-webpack-plugin": "^0.8.2",
     "html-webpack-plugin": "^1.6.0",
     "xvdom": "peterwmwong/xvdom#api-func",
