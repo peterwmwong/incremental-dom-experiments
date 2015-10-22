@@ -5,52 +5,68 @@ import Todo   from './Todo.jsx';
 const countIncompleted = todos=>
   todos.reduce((count, t)=>count + (t.completed ? 0 : 1), 0);
 
-const INIT_TODOS = [];
-for(let j = 0; j < 5; j++){
-  INIT_TODOS.push({id:`${j}`, title: `todo ${j}`});
-}
+const filterTodos = (todos, filter)=>
+  todos.filter(t=>
+        filter === 'all'
+    || (filter === 'active'    && !t.completed)
+    || (filter === 'completed' &&  t.completed)
+  );
 
-const App = (props, {todos, numIncompleted}, {addTodo, updateTodo})=>
+const App = (props, {todos, filter}, {addTodo, updateTodo, toggleAll, clearCompleted, changeFilter})=>
   <div className='todoapp'>
     <Header onAddTodo={addTodo} />
     <section className='main'>
       <input
         className='toggle-all'
         type='checkbox'
-        checked={!numIncompleted} />
+        onchange={toggleAll}
+        checked={!countIncompleted(todos)} />
       <ul className='todo-list'>
-        {todos.map(todo=>
+        {filterTodos(todos, filter).map(todo=>
           <Todo key={todo.id} todo={todo} updateTodo={updateTodo} />
         )}
       </ul>
     </section>
-    <Footer incompleteCount={numIncompleted} onClearCompleted={()=>{}}/>
+    <Footer
+      filter={filter}
+      incompleteCount={countIncompleted(todos)}
+      onClearCompleted={clearCompleted}
+      onChangeFilter={changeFilter}
+    />
   </div>;
 
 App.state = {
-  onInit: ()=>({todos: INIT_TODOS, numIncompleted: countIncompleted(INIT_TODOS)}),
-  addTodo: (props, {todos}, newTodoTitle)=>{
-    const newTodos = [
-      {id: `${todos.length}`, title: newTodoTitle},
-      ...todos
-    ];
-    return {
-      todos: newTodos,
-      numIncompleted: countIncompleted(newTodos)
-    };
-  },
+  onInit:  (props)=>({todos: props.initialTodos, filter: 'all'}),
+  addTodo: (props, state, newTodoTitle)=>({
+    ...state,
+    todos: [
+      {id: `${state.todos.length}`, title: newTodoTitle},
+      ...state.todos
+    ]
+  }),
   updateTodo: (props, state, todo, attrs)=>{
     const todos = state.todos;
     const index = todos.indexOf(todo);
     if(index === -1) return state;
 
-    const newTodos = [
-      ...todos.slice(0, index),
-      {...todo, ...attrs},
-      ...todos.slice(index + 1)
-    ];
-    return {todos: newTodos, numIncompleted: countIncompleted(todos)};
-  }
+    return {
+      ...state,
+      todos: [
+        ...todos.slice(0, index),
+        {...todo, ...attrs},
+        ...todos.slice(index + 1)
+      ]
+    };
+  },
+  clearCompleted: (props, state)=>({
+    ...state,
+    todos: state.todos.filter(t=>!t.completed)
+  }),
+  changeFilter: (props, state, filter)=>({...state, filter}),
+  toggleAll: (props, state, event)=>({
+    ...state,
+    todos: state.todos.map(t=>({...t, completed: event.target.checked}))
+  })
 };
 
 export default App;

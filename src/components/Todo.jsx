@@ -2,12 +2,14 @@ const todoClassName = (isEditing, todo)=>
     (isEditing      ? 'editing'    : '')
   + (todo.completed ? ' completed' : '');
 
-const Todo = (props, state, {onInit, edit, input, keydown})=>
+const Todo = (props, state, {onInit, edit, input, keydown, toggleComplete})=>
   <li key={props.todo.id} className={todoClassName(state.isEditing, props.todo)}>
     <div className="view">
       <input
         className='toggle'
         type='checkbox'
+        checked={props.todo.completed}
+        onchange={toggleComplete}
       />
       <label ondblclick={edit}>{props.todo.title}</label>
       <button className='destroy' />
@@ -32,6 +34,9 @@ Todo.state = {
 
     props.updateTodo(props.todo, {title: state.pendingTitle});
     return {...state, isEditing: false};
+  },
+  toggleComplete:(props, state)=>{
+    props.updateTodo(props.todo, {completed: !props.todo.completed});
   }
 };
 
