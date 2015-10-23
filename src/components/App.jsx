@@ -1,6 +1,7 @@
-import Footer from './Footer.jsx';
-import Header from './Header.jsx';
-import Todo   from './Todo.jsx';
+import combineState from '../helpers/combineState.js';
+import Footer       from './Footer.jsx';
+import Header       from './Header.jsx';
+import Todo         from './Todo.jsx';
 
 const countIncompleted = todos=>
   todos.reduce((count, t)=>count + (t.completed ? 0 : 1), 0);
@@ -35,38 +36,31 @@ const App = (props, {todos, filter}, {addTodo, updateTodo, toggleAll, clearCompl
     />
   </div>;
 
-App.state = {
-  onInit:  (props)=>({todos: props.initialTodos, filter: 'all'}),
-  addTodo: (props, state, newTodoTitle)=>({
-    ...state,
-    todos: [
-      {id: `${state.todos.length}`, title: newTodoTitle},
-      ...state.todos
-    ]
-  }),
-  updateTodo: (props, state, todo, attrs)=>{
-    const todos = state.todos;
-    const index = todos.indexOf(todo);
-    if(index === -1) return state;
+App.state = combineState({
+  todos: {
+    onInit:  (props)=>props.initialTodos,
+    addTodo: (props, todos, newTodoTitle)=>[
+      {id: `${todos.length}`, title: newTodoTitle},
+      ...todos
+    ],
+    updateTodo: (props, todos, todo, attrs)=>{
+      const index = todos.indexOf(todo);
+      if(index === -1) return todos;
 
-    return {
-      ...state,
-      todos: [
+      return [
         ...todos.slice(0, index),
         {...todo, ...attrs},
         ...todos.slice(index + 1)
-      ]
-    };
+      ];
+    },
+    clearCompleted: (props, todos)=>todos.filter(t=>!t.completed),
+    toggleAll: (props, todos, event)=>
+      todos.map(t=>({...t, completed: event.target.checked}))
   },
-  clearCompleted: (props, state)=>({
-    ...state,
-    todos: state.todos.filter(t=>!t.completed)
-  }),
-  changeFilter: (props, state, filter)=>({...state, filter}),
-  toggleAll: (props, state, event)=>({
-    ...state,
-    todos: state.todos.map(t=>({...t, completed: event.target.checked}))
-  })
-};
+  filter: {
+    onInit: ()=>'all',
+    changeFilter: (props, filter, newFilter)=>newFilter
+  }
+});
 
 export default App;
