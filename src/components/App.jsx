@@ -1,72 +1,70 @@
-import Footer from './Footer.jsx';
-import Header from './Header.jsx';
-import Todo   from './Todo.jsx';
+import './App.css';
 
-const countIncompleted = todos=>
-  todos.reduce((count, t)=>count + (t.completed ? 0 : 1), 0);
+const RepoName = ({owner, repo})=>
+  <span>
+    <span className="c-gray-darker t-light">{owner}/</span>
+    <span className="c-gray-darkest t-normal">{repo}</span>
+  </span>
 
-const filterTodos = (todos, filter)=>
-  todos.filter(t=>
-        filter === 'all'
-    || (filter === 'active'    && !t.completed)
-    || (filter === 'completed' &&  t.completed)
-  );
+const Toolbar = props=>
+  <div className="App__toolbar layout horizontal">
+    <div className="App__button App__button--menu">M</div>
+    <div className="App__title flex t-normal">Title</div>
+    <div className="App__button App__button--search">S</div>
+  </div>
 
-const App = (props, {todos, filter}, {addTodo, updateTodo, toggleAll, clearCompleted, changeFilter})=>
-  <div className='todoapp'>
-    <Header onAddTodo={addTodo} />
-    <section className='main'>
-      <input
-        className='toggle-all'
-        type='checkbox'
-        onchange={toggleAll}
-        checked={!countIncompleted(todos)} />
-      <ul className='todo-list'>
-        {filterTodos(todos, filter).map(todo=>
-          <Todo key={todo.id} todo={todo} updateTodo={updateTodo} />
-        )}
-      </ul>
-    </section>
-    <Footer
-      filter={filter}
-      incompleteCount={countIncompleted(todos)}
-      onClearCompleted={clearCompleted}
-      onChangeFilter={changeFilter}
-    />
+const PlaceholderCard = props=>
+  <div className="Card App__placeholderCard">
+    <div className="Card-title">
+      <div className="PlaceholderText l-margin-b2"></div>
+    </div>
+    <div className="App__placeholderCard__summary">
+      <div className="App__placeholderCard__avatar"></div>
+      <div className="PlaceholderText l-margin-b2 l-margin-l2"></div><br />
+      <div className="PlaceholderText l-width100pct"></div>
+      <div className="PlaceholderText"></div>
+    </div>
   </div>;
 
-App.state = {
-  onInit:  (props)=>({todos: props.initialTodos, filter: 'all'}),
-  addTodo: (props, state, newTodoTitle)=>({
-    ...state,
-    todos: [
-      {id: `${state.todos.length}`, title: newTodoTitle},
-      ...state.todos
-    ]
-  }),
-  updateTodo: (props, state, todo, attrs)=>{
-    const todos = state.todos;
-    const index = todos.indexOf(todo);
-    if(index === -1) return state;
+const Card = props=>
+  <div className="Card App__placeholderCard">
+    <div className="Card-title">
+      <RepoName owner="Polymer" repo="docs" />
+    </div>
+    <div className="Card-action ticker-event-summary">
+      <span className="ticker-event-summary__actor-avatar App__placeholderCard__avatar l-margin-b1"></span>
+      <span className="ticker-event-summary__actor">addyosmani</span>
+      <span className="l-margin-r3">opened</span>
+      <span className="l-height7">
+        <span className="ticker-event-summary__actor-avatar App__placeholderCard__avatar l-margin-r2"></span>
+        <div className="ticker-event-summary__subject">
+          Add global filters docs for #571
+        </div>
+      </span>
+    </div>
+    <div className="ticker-event__action">
+      <span className="ticker-event__action__text">
+        Same issue on Firefox 31 (64bit Linux) and Chromium 34 (64bit Linux)
+      </span>
+    </div>
+  </div>;
 
-    return {
-      ...state,
-      todos: [
-        ...todos.slice(0, index),
-        {...todo, ...attrs},
-        ...todos.slice(index + 1)
-      ]
-    };
-  },
-  clearCompleted: (props, state)=>({
-    ...state,
-    todos: state.todos.filter(t=>!t.completed)
-  }),
-  changeFilter: (props, state, filter)=>({...state, filter}),
-  toggleAll: (props, state, event)=>({
-    ...state,
-    todos: state.todos.map(t=>({...t, completed: event.target.checked}))
-  })
+const Events = props=>
+  <div className="l-margin-t2">
+    <Card />
+    <Card />
+    <PlaceholderCard />
+    <Card />
+  </div>
+
+const App = (props, state, actions)=>
+  <body className='App fit fullbleed'>
+    <Toolbar />
+    <Events />
+  </body>;
+
+App.state = {
+  onInit: props=>({})
 };
 
 export default App;

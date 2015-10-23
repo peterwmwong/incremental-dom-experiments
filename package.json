@@ -13,13 +13,14 @@
     "eslint-plugin-react": "^3.6.3",
     "extract-text-webpack-plugin": "^0.8.2",
     "html-webpack-plugin": "^1.6.0",
-    "xvdom": "peterwmwong/xvdom#api-func",
     "node-libs-browser": "^0.5.2",
+    "redux": "^3.0.3",
     "style-loader": "^0.12.3",
     "todomvc-app-css": "^2.0.1",
     "todomvc-common": "^1.0.2",
     "webpack": "^1.10.1",
-    "webpack-dev-server": "^1.12.1"
+    "webpack-dev-server": "^1.12.1",
+    "xvdom": "peterwmwong/xvdom#api-func"
   },
   "scripts": {
     "server": "webpack-dev-server --config webpack-server.config.js",
