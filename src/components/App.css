@@ -316,6 +316,9 @@ marked-element img {
 .t-align-center {
   text-align: center;
 }
+.t-nowrap {
+  white-space: nowrap;
+}
 
 .App__placeholderCard__summary {
   background: #f9fafb;
@@ -350,7 +353,7 @@ marked-element img {
   background: #3F51B5;
   color: white;
   height: 56px;
-  line-height: 53px;
+  line-height: 56px;
 }
 .App__toolbar.is-scrolling-up {
   position: fixed;
@@ -435,9 +438,6 @@ ticker-avatar, .ticker-avatar-icon {
   overflow: hidden;
   padding: 16px;
 }
-.ticker-event-summary > * {
-  float: left;
-}
 .ticker-event-summary__actor {
   font-weight: 400;
   margin-right: 4px;
@@ -483,4 +483,13 @@ ticker-avatar, .ticker-avatar-icon {
   -ms-flex: 1;
   flex: 1;
   padding-left: 4px;
+}
+
+.icon-24,
+.octicon {
+  font-size: 24px !important;
+}
+
+.icon-32 {
+  font-size: 32px !important;
 }
