@@ -1,10 +1,9 @@
 export default function loadJSON(url){
   if(IS_DEV && IS_MOCKING){
     if(/https:\/\/api.github.com\/repos\/[A-z\-]+\/([A-z\-]+\/)?events/.test(url)){
-      url = '/src/helpers/mock_data/GithubEventMapper-allEvents-MOCK.json';
+      url = '/src/helpers/mock_data/GithubEventMapper2MOCK.json';
     }
     else if(/https:\/\/api.github.com\/users\/[A-z\-]+\/([A-z\-]+\/)?events/.test(url)){
-      // url = '/src/helpers/mock_data/GithubEventMapperMock.json';
       url = '/src/helpers/mock_data/GithubEventMapper-allEvents-MOCK.json';
     }
     else if(/https:\/\/api.github.com\/repos\/[^\/]*\/[^\/]*$/.test(url)){

@@ -1,4 +1,4 @@
-export default [
+[
   {
     "id": "2249773972",
     "type": "DeleteEvent",
@@ -3892,4 +3892,4 @@ export default [
       "avatar_url": "https://avatars.githubusercontent.com/u/13479?"
     }
   }
-];
+]
