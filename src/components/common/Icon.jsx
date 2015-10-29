@@ -1,2 +1,6 @@
-export default ({name, className=''})=>
-  <i className={`${className} material-icons`}>{name}</i>
+export default ({name, className='', onClick})=>
+  <i
+    className={`${className} material-icons`}
+    onclick={onClick}>
+    {name}
+  </i>

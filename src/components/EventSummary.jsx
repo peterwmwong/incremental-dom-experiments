@@ -1,4 +1,3 @@
-import Icon from './common/Icon.jsx';
 import Avatar from './common/Avatar.jsx';
 import GithubIcon from './common/GithubIcon.jsx';
 

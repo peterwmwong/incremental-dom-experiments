@@ -8,12 +8,13 @@ const RepoView = ({user}, {events})=>
     )}
   </div>;
 
+const INIT_STATE = {events: []};
 RepoView.state = {
   onInit: ({user}, state, {loadEvents})=>{
     GithubEvent.query({type:'repos', id:user}).then(loadEvents);
-    return {events: []};
+    return INIT_STATE;
   },
-
+  onProps: (props, state, {onInit})=>onInit(),
   loadEvents: (props, state, actions, events)=>({events})
 };
 

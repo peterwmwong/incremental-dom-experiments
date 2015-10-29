@@ -14,7 +14,7 @@ UserView.state = {
     GithubEvent.query({type:'users', id:user}).then(loadEvents);
     return INIT_STATE;
   },
-
+  onProps: (props, state, {onInit})=>onInit(),
   loadEvents: (props, state, actions, events)=>({events})
 };
 

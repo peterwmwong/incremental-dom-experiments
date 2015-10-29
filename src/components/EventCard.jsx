@@ -1,4 +1,4 @@
-import RepoName     from './RepoName.jsx';
+import SourceName   from './SourceName.jsx';
 import EventSummary from './EventSummary.jsx';
 
 const renderEventAction = event=>{
@@ -14,7 +14,7 @@ const renderEventAction = event=>{
 
   case 'PushEvent':
     return event.payload.commits.map(commit=>
-      <div className="ticker-event__action">
+      <div key={commit.sha} className="ticker-event__action">
         <span className="ticker-event__action__text">{commit.message}</span>
       </div>
     );
@@ -24,7 +24,7 @@ const renderEventAction = event=>{
 export default ({event})=>
   <div className="Card App__placeholderCard">
     <div className="Card-title">
-      <RepoName className="flex" displayName={event.repo.displayName} />
+      <SourceName className="flex" displayName={event.repo.displayName} />
       <span className='c-gray-dark t-font-size-11'>{event.timeAgo}</span>
     </div>
     <EventSummary event={event}/>
