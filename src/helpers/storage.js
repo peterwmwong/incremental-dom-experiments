@@ -21,7 +21,7 @@ function removeLRUItem(){
   if(lruKey){
     if(IS_DEV) console.warn(`[storage] ${lruKey} bumped`); //eslint-disable-line
     localStorage.removeItem(lruKey);
-    updateRegistry(lruKey, null);
+    updateRegistryKey(lruKey, null);
   }
 }
 
@@ -37,14 +37,14 @@ function safeSetItem(key, value){
   throw new Error(`Unable to make room to store ${key}.`);
 }
 
-function updateRegistry(key, value){
+function updateRegistryKey(key, value){
   if(value) registry[key] = value;
   else delete registry[key];
   safeSetItem(REGISTRY_KEY, JSON.stringify(registry));
   return registry;
 }
 
-function updateLRUItem(key){ updateRegistry(key, Date.now()); }
+function updateLRUItem(key){ updateRegistryKey(key, Date.now()); }
 
 export default {
   getItem(key){

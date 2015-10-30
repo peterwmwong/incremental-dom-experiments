@@ -82,7 +82,7 @@ export function polymorphic(types, typeFromJSON){
   return new Polymorphic(types, typeFromJSON);
 }
 
-export default class Model {
+export default class Model{
   constructor(data){
     this.constructor._ensureModelPrepared();
 

@@ -10,7 +10,6 @@ const App = (props, state, actions)=>
     <Toolbar title={state.data} onRequestDrawer={actions.enableDrawer} />
     {   state.view === 'user'  ? <UserView user={state.data} />
       : state.view === 'repo'  ? <RepoView repo={state.data} />
-      : state.view === 'login' ? <LoginView />
       : null }
     <AppDrawer
       user={state.currentUser}
@@ -37,7 +36,6 @@ App.state = {
   },
   viewUser:  (props, state, actions, user)=>({...state, view: 'user', data: user}),
   viewRepo:  (props, state, actions, repo)=>({...state, view: 'repo', data: repo}),
-  viewLogin: (props, state, actions)=>({...state, view: 'login', data: null}),
   onCurrentUserChange: (props, state, actions, currentUser)=>({
     ...state,
     currentUser
