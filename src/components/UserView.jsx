@@ -8,11 +8,11 @@ const UserView = ({user}, {events})=>
     )}
   </div>;
 
-const INIT_STATE = {events: []};
 UserView.state = {
   onInit: ({user}, state, {loadEvents})=>{
-    GithubEvent.query({type:'users', id:user}).then(loadEvents);
-    return INIT_STATE;
+    const queryParams = {type:'users', id:user};
+    GithubEvent.query(queryParams).then(loadEvents);
+    return {events: GithubEvent.localQuery(queryParams)};
   },
   onProps: (props, state, {onInit})=>onInit(),
   loadEvents: (props, state, actions, events)=>({events})
