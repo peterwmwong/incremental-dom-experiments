@@ -1,15 +1,6 @@
-import Source from './sources/Source.js';
-import Model from '../helpers/bureau/model.js';
-
-// function updateCreate(user){
-//   return new Promise((resolve, reject)=>
-//     new Firebase(`${TICKER_CONFIG.firebaseUrl}/users/${user.id}`).set({
-//       id:user.id,
-//       githubUsername:user.githubUsername,
-//       sources:user.sources.map(s=>s.toSourceJSON())
-//     }, error=>error ? reject(error) : resolve(user))
-//   );
-// }
+import Source  from './sources/Source.js';
+import Model   from '../helpers/bureau/model.js';
+import storage from '../helpers/storage.js';
 
 export default class User extends Model{
   static get desc(){
@@ -22,22 +13,28 @@ export default class User extends Model{
         sources:{ type:Source }
       },
       mapper: {
+        localGet:id=>{
+          const local = storage.getItem(`ticker:User:${id}`);
+          return local ? JSON.parse(local) : null;
+        },
         save:user=>
           new Promise((resolve, reject)=>
             new Firebase(`https://ticker-dev.firebaseio.com/users/${user.id}`)
-              .set(user.toJSON(), err=>err ? reject(err) : resolve(user))
+              .set(user.toJSON(), (err)=>{
+                if(err) return reject(err);
+                storage.setItem(`ticker:User:${user.id}`, JSON.stringify(user));
+                resolve(user);
+              })
           ),
         get:id=>
           new Promise((resolve, reject)=>
             new Firebase(`https://ticker-dev.firebaseio.com/users/${id}`)
               .once('value', data=>{
                 const val = data.val();
-                if(val){
-                  resolve(val);
-                }
-                else{
-                  reject("Couldn't find User");
-                }
+                if(!val) reject("Couldn't find User");
+
+                storage.setItem(`ticker:User:${val.id}`, JSON.stringify(val));
+                resolve(val);
               })
           )
       }

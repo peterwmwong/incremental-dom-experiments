@@ -152,6 +152,14 @@ export default class Model{
     return results.map(data=>this.loadJSON(data));
   }
 
+  static localGet(id){
+    if(IS_DEV && !this.desc.mapper.localGet){
+      errorMapperMethodNotImplemented(this, 'localGet');
+    }
+    const result = this.desc.mapper.localGet(id);
+    return result ? this.loadJSON(result) : null;
+  }
+
   save(){
     if(IS_DEV && !this.constructor.desc.mapper.save){
       errorMapperMethodNotImplemented(this.constructor, 'save');

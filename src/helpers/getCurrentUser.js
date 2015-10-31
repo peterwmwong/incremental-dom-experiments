@@ -1,7 +1,9 @@
 import load         from './load';
 import loadFirebase from './loaders/loadFirebase';
 import User         from '../models/User';
+import storage      from '../helpers/storage';
 
+const LAST_LOGIN_ID_STORAGE_KEY = 'lastLoggedInUserId';
 let currentUser = null;
 
 const waitForFirebase = (props, state, actions)=>
@@ -33,12 +35,22 @@ const getOrCreateUser = ({id, username, accessToken})=>{
   return User.get(id)
     // Couldn't find existing user w/authId, so create a new User
     .catch(()=>new User({id, username, sources:[]}).save())
-    .then(user=>currentUser = user);
+    .then(user=>{
+      storage.setItem(LAST_LOGIN_ID_STORAGE_KEY, id);
+      return currentUser = user;
+    });
 };
 
 
 export default ()=>{
   if(currentUser) return Promise.resolve(currentUser);
+
+  const lastUserId = storage.getItem(LAST_LOGIN_ID_STORAGE_KEY);
+  const lastUser   = lastUserId && User.localGet(lastUserId);
+  if(lastUser){
+    currentUser = lastUser;
+    return Promise.resolve(currentUser);
+  }
 
   return waitForFirebase()
     .then(authWithFirebase)
