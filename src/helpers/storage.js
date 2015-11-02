@@ -4,7 +4,7 @@ Cross-session, Key-Value, LRU expunging storage.
 
 */
 
-const REGISTRY_KEY = 'tickerStorage';
+const REGISTRY_KEY = 'ticker:storage';
 
 // Map of storage key to last used timestamp.
 const registry = (()=>{

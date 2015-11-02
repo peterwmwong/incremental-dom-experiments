@@ -3,7 +3,7 @@ import loadFirebase from './loaders/loadFirebase';
 import User         from '../models/User';
 import storage      from '../helpers/storage';
 
-const LAST_LOGIN_ID_STORAGE_KEY = 'lastLoggedInUserId';
+const LAST_LOGIN_ID_STORAGE_KEY = 'ticker:lastLoggedInUserId';
 let currentUser = null;
 
 const waitForFirebase = (props, state, actions)=>
