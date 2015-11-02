@@ -1,5 +1,5 @@
-import loadJSON    from '../../helpers/load.js';
-import Model       from '../../helpers/bureau/model.js';
+import loadJSON    from '../../helpers/load';
+import Model       from '../../helpers/bureau/model';
 
 export default class GithubUser extends Model{
   static get desc(){

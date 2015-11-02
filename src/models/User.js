@@ -1,6 +1,6 @@
-import Source  from './sources/Source.js';
-import Model   from '../helpers/bureau/model.js';
-import storage from '../helpers/storage.js';
+import Source  from './sources/Source';
+import Model   from '../helpers/bureau/model';
+import storage from '../helpers/storage';
 
 export default class User extends Model{
   static get desc(){

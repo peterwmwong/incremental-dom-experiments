@@ -1,6 +1,6 @@
-import GithubUser from '../github/GithubUser.js';
-import GithubRepo from '../github/GithubRepo.js';
-import {polymorphic}    from '../../helpers/bureau/model.js';
+import GithubUser    from '../github/GithubUser';
+import GithubRepo    from '../github/GithubRepo';
+import {polymorphic} from '../../helpers/bureau/model';
 
 export default polymorphic(
   [GithubUser, GithubRepo],

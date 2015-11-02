@@ -1,9 +1,9 @@
-import loadJSON   from '../../helpers/load.js';
-import Model      from '../../helpers/bureau/model.js';
-import GithubUser from './GithubUser.js';
-import GithubRepo from './GithubRepo.js';
-import timeAgo    from '../../helpers/timeAgo.js';
-import storage    from '../../helpers/storage.js';
+import loadJSON   from '../../helpers/load';
+import Model      from '../../helpers/bureau/model';
+import GithubUser from './GithubUser';
+import GithubRepo from './GithubRepo';
+import timeAgo    from '../../helpers/timeAgo';
+import storage    from '../../helpers/storage';
 
 // TOOD(pwong): We don't may need more then just property access in the future
 // const TYPE_TO_PAYLOAD = {
