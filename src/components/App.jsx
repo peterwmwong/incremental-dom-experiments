@@ -4,20 +4,26 @@ import Toolbar        from './Toolbar.jsx';
 import UserView       from './UserView.jsx';
 import RepoView       from './RepoView.jsx';
 import CommitView     from './CommitView.jsx';
-import getCurrentUser from '../helpers/getCurrentUser';
+import {
+  authWithOAuthPopup,
+  getCurrentUser
+} from '../helpers/getCurrentUser';
 
 const App = (props, state, actions)=>
   <body className='App fit fullbleed'>
     <Toolbar title={state.data} onRequestDrawer={actions.enableDrawer} />
-    {   state.view === 'user'  ? <UserView user={state.data} />
-      : state.view === 'repo'  ? <RepoView repo={state.data} />
-      : null }
-    <CommitView user={state.data} />
+    {
+        state.view === 'user'   ? <UserView   user={state.data} />
+      : state.view === 'repo'   ? <RepoView   repo={state.data} />
+      : state.view === 'commit' ? <CommitView commit={state.data} />
+      : null
+    }
     <AppDrawer
       user={state.currentUser}
       enabled={state.drawerEnabled}
       onSelectSource={actions.selectSource}
       onRequestDisable={actions.disableDrawer}
+      onLogin={actions.login}
     />
   </body>;
 
@@ -46,6 +52,10 @@ App.state = {
   disableDrawer: (props, state, actions)=>({...state, drawerEnabled: false}),
   selectSource:  (props, state, actions, source)=>{
     window.location.hash = `#github/${source.displayName}`
+  },
+  login: (props, state, {onCurrentUserChange})=>{
+    authWithOAuthPopup().then(onCurrentUserChange);
+    return state;
   }
 };
 
