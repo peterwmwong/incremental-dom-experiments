@@ -33,7 +33,7 @@ export default ()=>{
   }
   else{
     window.requestAnimationFrame(()=>{
-      let s = document.createElement('script');
+      const s = document.createElement('script');
       s.src = `http://${(location.host || 'localhost')}/components/firebase/firebase.js`;
       document.body.appendChild(s);
     });

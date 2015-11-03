@@ -3,6 +3,7 @@ import AppDrawer      from './AppDrawer.jsx';
 import Toolbar        from './Toolbar.jsx';
 import UserView       from './UserView.jsx';
 import RepoView       from './RepoView.jsx';
+import CommitView     from './CommitView.jsx';
 import getCurrentUser from '../helpers/getCurrentUser';
 
 const App = (props, state, actions)=>
@@ -11,6 +12,7 @@ const App = (props, state, actions)=>
     {   state.view === 'user'  ? <UserView user={state.data} />
       : state.view === 'repo'  ? <RepoView repo={state.data} />
       : null }
+    <CommitView user={state.data} />
     <AppDrawer
       user={state.currentUser}
       enabled={state.drawerEnabled}
